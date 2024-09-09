@@ -4,7 +4,6 @@ import dino.*
 program DinoGame {
 
 	juego.configurar()
-	juego.iniciar()
 	game.start()
 
 }

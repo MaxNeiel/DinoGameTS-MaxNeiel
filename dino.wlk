@@ -5,18 +5,18 @@ const velocidad = 250
 object juego{
 
 	method configurar(){
-		game.width(12)
+		game.width(13)
 		game.height(8)
-		game.title("Dino Game")
 		game.addVisual(suelo)
+		cactus.posicionar()
 		game.addVisual(cactus)
 		game.addVisual(dino)
-		game.addVisual(reloj)
+		game.boardGround("arena.png")
+
+		//game.addVisual(reloj)
 	
 		keyboard.space().onPressDo{ self.jugar()}
-		
 		game.onCollideDo(dino,{ obstaculo => obstaculo.chocar()})
-		
 	} 
 	
 	method iniciar(){
@@ -32,39 +32,36 @@ object juego{
 			game.removeVisual(gameOver)
 			self.iniciar()
 		}
-		
 	}
-	
 	method terminar(){
 		game.addVisual(gameOver)
-		game.addVisual(auch)
 		cactus.detener()
 		reloj.detener()
 		dino.morir()
 	}
-	
 }
 
 object gameOver {
 	method position() = game.center()
-	method text() = "GAME OVER"
+	method image() = "gameover.png"
 	
 
 }
 
 object reloj {
-	
 	var tiempo = 0
 	
-	method text() = tiempo.toString()
-	method position() = game.at(1, game.height()-1)
+	method tiempo() = tiempo
+
+	// TODO method image() 
+	// TODO method position() 
 	
 	method pasarTiempo() {
-		tiempo = tiempo +1
+		tiempo = tiempo + 1
 	}
 	method iniciar(){
 		tiempo = 0
-		game.onTick(100,"tiempo",{self.pasarTiempo()})
+		game.onTick(1000,"tiempo",{self.pasarTiempo()})
 	}
 	method detener(){
 		game.removeTickEvent("tiempo")
@@ -73,22 +70,24 @@ object reloj {
 
 object cactus {
 	 
-	var position = self.posicionInicial()
+	var position = null
 
 	method image() = "cactus.png"
 	method position() = position
 	
-	method posicionInicial() = game.at(game.width()-1,suelo.position().y())
+	method posicionar() {
+		position = game.at(game.width()-1,suelo.position().y())
+	}
 
 	method iniciar(){
-		position = self.posicionInicial()
+		self.posicionar()
 		game.onTick(velocidad,"moverCactus",{self.mover()})
 	}
 	
 	method mover(){
 		position = position.left(1)
 		if (position.x() == -1)
-			position = self.posicionInicial()
+			self.posicionar()
 	}
 	
 	method chocar(){
@@ -100,37 +99,31 @@ object cactus {
 }
 
 object suelo{
-	
 	method position() = game.origin().up(1)
-	
 	method image() = "suelo.png"
 }
 
-
 object dino {
-	var vivo = true
-
+	var vivo = false
 	var position = game.at(1,suelo.position().y())
 	
 	method image() = "dino.png"
 	method position() = position
-	
+
 	method saltar(){
 		if(position.y() == suelo.position().y()) {
 			self.subir()
 			game.schedule(velocidad*3,{self.bajar()})
 		}
 	}
-	
 	method subir(){
 		position = position.up(1)
 	}
-	
 	method bajar(){
 		position = position.down(1)
 	}
 	method morir(){
-		//game.say(self,"¡Auch!")
+		game.say(self,"¡Auch!" + " tiempo: " + reloj.tiempo())
 		vivo = false
 	}
 	method iniciar() {
@@ -139,9 +132,4 @@ object dino {
 	method estaVivo() {
 		return vivo
 	}
-}
-
-object auch {
-	method position() = dino.position().down(1)
-	method text() = "¡Auch!"	
 }
