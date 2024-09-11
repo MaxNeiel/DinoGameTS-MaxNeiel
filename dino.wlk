@@ -10,6 +10,8 @@ object juego{
 		game.addVisual(suelo)
 		cactus.posicionar()
 		game.addVisual(cactus)
+		manzana.posicionar()
+		game.addVisual(manzana)
 		game.addVisual(dino)
 		game.boardGround("arena.png")
 
@@ -23,6 +25,7 @@ object juego{
 		dino.iniciar()
 		reloj.iniciar()
 		cactus.iniciar()
+		manzana.iniciar()
 	}
 	
 	method jugar(){
@@ -131,5 +134,35 @@ object dino {
 	}
 	method estaVivo() {
 		return vivo
+	}
+}
+
+object manzana {
+	 
+	var position = null
+
+	method image() = "manzana.png"
+	method position() = position
+	
+	method posicionar() {
+		position = game.at(game.width()-1,suelo.position().y()+1)
+	}
+
+	method iniciar(){
+		self.posicionar()
+		game.onTick(velocidad,"moverManzana",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.left(1)
+		if (position.x() == -1)
+			self.posicionar()
+	}
+	
+	method chocar(){
+		
+	}
+    method detener(){
+		game.removeTickEvent("moverManzana")
 	}
 }

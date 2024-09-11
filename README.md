@@ -1,6 +1,6 @@
 # DINO
 
-El juego que usan cuando no tiene internet pero programado por uds mismos en Wollok.
+El juego que usan cuando no tienen internet pero programado por uds mismos en Wollok.
 
 Se centra en utilizar bloques de código. 
 En particular, con los métodos de
